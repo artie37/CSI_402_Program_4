@@ -14,6 +14,8 @@ int main(int argc, char * argv[])
     // Function call to utilities to open all input and output files
     loadOpcodes();
     // Function call to loadOpcodes to insert the opcodes in to the opcode struct array
+    errorChecker();
+    // Function call to errorChecker
     return 0;
 }
 
