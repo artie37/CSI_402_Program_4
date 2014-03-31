@@ -10,3 +10,5 @@
 // Size of the opcodeTable struct array
 #define BEGINING_OF_STRING -1
 // Condition to see if i is at the begining of the string
+#define LINE_SIZE 81
+// Max number of characters per line in the source file
