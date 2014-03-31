@@ -4,3 +4,4 @@
 
 void loadOpcodes();
 void openFiles(char *);
+void errorChecker();
