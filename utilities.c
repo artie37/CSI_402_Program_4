@@ -9,13 +9,17 @@
 // the opcodes file line by line while there are values left to be read. Each time a value is read, it will
 // be stored in the opcodeTable struct.
 
-// openFiles:
-// This function opens all of the files used in this program. There is an assembly file, symbol table file,
-// object file, and error file. All of these files have the same name but their file extensions need to be
-// added to the file name. First, the assembly file is opened. Then, the function checks the assembly file
-// name to see if it has a file extension. If it does, the file extension is removed. If it doesn't, nothing
-// is done. After the file extension is removed, the name is copied into three new character arrays and new
-// file extensions are added to them. After the extensions are added to the names, the three files are opened.
+// symbolName:
+// This function reads the name of the input assembly file and checks if it has a file extension. If it does,
+// the extension name is including the '.' is striped off. If not, nothing is done. Next the extension ".sym"
+// is appendend to the name to get the name. In the main function, a file with this extension will be created to
+// store the symbol table.
+
+// objectName:
+// Same as symbolName except used for object name
+
+// errorName:
+// Same as symbolName except used for error name
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +36,7 @@ void loadOpcodes()
     // File pointer to store the opcode text file
     int i = 0;
     // Int variable to loop through the opcode table struct array
-    OpCodeTable opcodeTable[OPTABLE_SIZE];
+    //OpCodeTable opcodeTable[OPTABLE_SIZE];
     // Struct array definition
     
     if openOpcodeFile(opcodeFile)
@@ -45,18 +49,19 @@ void loadOpcodes()
     for opTableCondition(i)
     // Loop through the opcode file
     {
-        fscanf(opcodeFile, "%d %s %c", &opcodeTable[i].opcode,
-               opcodeTable[i].mnemonic, &opcodeTable[i].format);
-        // Reads the opcode, mnemonic, and the format from the opcode file and
+        fscanf(opcodeFile, "%d %s %c %d", &opCodeTable[i].opcode,
+               opCodeTable[i].mnemonic, &opCodeTable[i].format, &opCodeTable[i].numOps);
+        // Reads the opcode, mnemonic, the format, and the number of operands from the opcode file and
         // store it in the opcode table.
     }
     
-// Print opcode table for testing purposes
+    // Print opcode table for testing purposes
 //    i = 0;
 //    
 //    for opTableCondition(i)
 //    {
-//        printf("%d %s %c\n", opcodeTable[i].opcode, opcodeTable[i].mnemonic, opcodeTable[i].format);
+//        printf("%d %s %c %d\n", opCodeTable[i].opcode, opCodeTable[i].mnemonic,
+//               opCodeTable[i].format, opCodeTable[i].numOps);
 //    }
 //    
     if closeOpcodeFile(opcodeFile)
@@ -67,29 +72,22 @@ void loadOpcodes()
     }
 }
 
-void openFiles(char *asmName)
+char* symbolName(char *asmName)
 {
-    char symName[(int)strlen(asmName) + 4];
-    char objName[(int)strlen(asmName) + 4];
-    char errName[(int)strlen(asmName) + 4];
-    // Define character arrays 4 larger than inFile to store ".sym", ".obj", ".err"
-    
-    int i = (int)strlen(asmName);
-    // Int variable to store the string length of asmFile and loop through it
+    char *symName;
+    // Stores the name of the symbol table file
+    int i = ((int)strlen(asmName) - 1);
+    // Int variable to store the string length of asmName and loop through it
     int j = i;
     // Int variable to compare to i
-    
-    if openAsmFile(asmFile, asmName)
-    // Open assembly file. If it doesn't open, print error message and close program.
-    {
-        fprintf(stderr, "Error: Couldn't Open Assembly File\n");
-        exit(1);
-    }
+
+    symName = malloc((int)strlen(asmName) + 4);
+    // Allocate memomory to store the name of the file and the extension ".sym"
     
     for findPeriod(asmName, i);
     // Loop through character array until the first '.'
     
-    if noExt(i, BEGINING_OF_STRING)
+    if noExt(i, BEGINNING_OF_STRING)
     // Checks if there is no file extension. If there isn't, do nothing.
     {}
     
@@ -104,38 +102,86 @@ void openFiles(char *asmName)
     }
     
     strcpy(symName, asmName);
-    strcpy(objName, asmName);
-    strcpy(errName, asmName);
-    // Copy the name of the input file into symFile, objFile, and errFile
+    // Copy the name of the input file into symFile
     
     strcat(symName, ".sym");
-    strcat(objName, ".obj");
+    // Append the extension to the end of the file name
+    
+    return symName;
+}
+
+char* objectName(char *asmName)
+{
+    char *objName;
+    // Stores the name of the object file
+    int i = ((int)strlen(asmName) - 1);
+    // Int variable to store the string length of asmName and loop through it
+    int j = i;
+    // Int variable to compare to i
+    
+    objName = malloc((int)strlen(asmName) + 4);
+    // Allocate memomory to store the name of the file and the extension ".sym"
+    
+    for findPeriod(asmName, i);
+    // Loop through character array until the first '.'
+    
+    if noExt(i, BEGINNING_OF_STRING)
+    // Checks if there is no file extension. If there isn't, do nothing.
+    {}
+    
+    else
+    // If there is a file extension, delete extension
+    {
+        for delExt(i, j)
+        // For loop to delete extension
+        {
+            asmName[i] = '\0';
+        }
+    }
+    
+    strcpy(objName, asmName);
+    // Copy the name of the input file into symFile
+    
+    strcat(objName, ".sym");
+    // Append the extension to the end of the file name
+    
+    return objName;
+}
+
+char* errorName(char *asmName)
+{
+    char *errName;
+    // Stores the name of the error file
+    int i = ((int)strlen(asmName) - 1);
+    // Int variable to store the string length of asmName and loop through it
+    int j = i;
+    // Int variable to compare to i
+    
+    errName = malloc((int)strlen(asmName) + 4);
+    // Allocate memomory to store the name of the file and the extension ".sym"
+    
+    for findPeriod(asmName, i);
+    // Loop through character array until the first '.'
+    
+    if noExt(i, BEGINNING_OF_STRING)
+    // Checks if there is no file extension. If there isn't, do nothing.
+    {}
+    
+    else
+    // If there is a file extension, delete extension
+    {
+        for delExt(i, j)
+        // For loop to delete extension
+        {
+            asmName[i] = '\0';
+        }
+    }
+    
+    strcpy(errName, asmName);
+    // Copy the name of the input file into symFile
+    
     strcat(errName, ".err");
     // Append the extension to the end of the file name
- 
-//    print file names for testing purposes
-//    printf("%s\n", symName);
-//    printf("%s\n", objName);
-//    printf("%s\n", errName);
     
-    if openSymFile(symFile, symName)
-    // Open symbol table file. If it doesn't open, print error message and close program.
-    {
-        fprintf(stderr, "Error: Symbol Table File Did Not Open\n");
-        exit(1);
-    }
-    
-    if openObjFile(objFile, objName)
-    // Open object file. If it doesn't open, print error message and close program.
-    {
-        fprintf(stderr, "Error: Object File Did Not Open\n");
-        exit(1);
-    }
-    
-    if openErrFile(errFile, errName)
-    // Open error file. If it doesn't open, print error message and close program.
-    {
-        fprintf(stderr, "Error: Error File Did Not Open\n");
-        exit(1);
-    }
+    return errName;
 }
