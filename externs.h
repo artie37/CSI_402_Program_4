@@ -12,3 +12,5 @@ extern FILE *symFile;
 // Used to reference the output symbol table file
 extern FILE *errFile;
 // Used to reference the output error file
+extern char *token;
+// Used to store the label to be entered into the symbol table
