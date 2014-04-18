@@ -55,15 +55,6 @@ void loadOpcodes()
         // store it in the opcode table.
     }
     
-    // Print opcode table for testing purposes
-//    i = 0;
-//    
-//    for opTableCondition(i)
-//    {
-//        printf("%d %s %c %d\n", opCodeTable[i].opcode, opCodeTable[i].mnemonic,
-//               opCodeTable[i].format, opCodeTable[i].numOps);
-//    }
-//    
     if closeOpcodeFile(opcodeFile)
     // Close opcodes file. If it doesn't close, print error message and close program.
     {
@@ -81,7 +72,7 @@ char* symbolName(char *asmName)
     int j = i;
     // Int variable to compare to i
 
-    symName = malloc((int)strlen(asmName) + 4);
+    symName = malloc((int)strlen(asmName) + EXTENSION);
     // Allocate memomory to store the name of the file and the extension ".sym"
     
     for findPeriod(asmName, i);
@@ -119,7 +110,7 @@ char* objectName(char *asmName)
     int j = i;
     // Int variable to compare to i
     
-    objName = malloc((int)strlen(asmName) + 4);
+    objName = malloc((int)strlen(asmName) + EXTENSION);
     // Allocate memomory to store the name of the file and the extension ".sym"
     
     for findPeriod(asmName, i);
@@ -142,7 +133,7 @@ char* objectName(char *asmName)
     strcpy(objName, asmName);
     // Copy the name of the input file into symFile
     
-    strcat(objName, ".sym");
+    strcat(objName, ".obj");
     // Append the extension to the end of the file name
     
     return objName;
@@ -157,7 +148,7 @@ char* errorName(char *asmName)
     int j = i;
     // Int variable to compare to i
     
-    errName = malloc((int)strlen(asmName) + 4);
+    errName = malloc((int)strlen(asmName) + EXTENSION);
     // Allocate memomory to store the name of the file and the extension ".sym"
     
     for findPeriod(asmName, i);
